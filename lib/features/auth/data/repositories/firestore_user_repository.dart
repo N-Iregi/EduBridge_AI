@@ -1,0 +1,76 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../domain/entities/user_entity.dart';
+import '../../domain/repositories/user_repository.dart';
+import '../models/user_model.dart';
+
+/// Firestore implementation of the UserRepository.
+class FirestoreUserRepository implements UserRepository {
+  final FirebaseFirestore _firestore;
+
+  FirestoreUserRepository({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  CollectionReference<Map<String, dynamic>> get _usersCollection =>
+      _firestore.collection('users');
+
+  @override
+  Future<UserEntity?> getUserById(String uid) async {
+    try {
+      final doc = await _usersCollection.doc(uid).get();
+      if (doc.exists) {
+        return UserModel.fromSnapshot(doc);
+      }
+      return null;
+    } catch (e) {
+      // In a real-world scenario, you might want to log this or throw a custom exception
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> createUser(UserEntity user) async {
+    try {
+      final userModel = UserModel(
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+        bio: user.bio,
+        profilePictureUrl: user.profilePictureUrl,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      );
+      await _usersCollection.doc(user.id).set(userModel.toMap());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUser(UserEntity user) async {
+    try {
+      final userModel = UserModel(
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+        bio: user.bio,
+        profilePictureUrl: user.profilePictureUrl,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      );
+      await _usersCollection.doc(user.id).update(userModel.toMap());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteUser(String uid) async {
+    try {
+      await _usersCollection.doc(uid).delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
