@@ -1,6 +1,6 @@
 import '../entities/notification_entity.dart';
 
-/// Abstract definition of database operations regarding Notification entities.
+/// Storage-agnostic contract for reading and writing user notifications.
 abstract class NotificationRepository {
   /// Retrieves notifications targeted to a specific user.
   Future<List<NotificationEntity>> getNotificationsByUserId(String userId);

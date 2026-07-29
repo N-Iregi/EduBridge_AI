@@ -41,8 +41,12 @@ class AuthRepository {
   /// for "persistence after restart."
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
+  /// The signed-in Firebase user, or null if no one is logged in.
   User? get currentUser => _firebaseAuth.currentUser;
 
+  /// Whether the signed-in user has confirmed their email address.
+  /// Reflects whatever was cached at last sign-in or [reloadUser] call —
+  /// call [reloadUser] first if you need the up-to-the-second value.
   bool get isEmailVerified => _firebaseAuth.currentUser?.emailVerified ?? false;
 
   /// Creates the Firebase Auth account AND the matching Firestore
@@ -100,6 +104,9 @@ class AuthRepository {
     return user;
   }
 
+  /// Signs in with an existing email/password account. Throws
+  /// [AuthException] with a user-facing message if the credentials are
+  /// wrong or the account doesn't exist.
   Future<User?> signInWithEmail({
     required String email,
     required String password,
@@ -162,6 +169,9 @@ class AuthRepository {
     }
   }
 
+  /// Sends Firebase's standard password-reset email to [email]. Succeeds
+  /// even if no account exists for that address, so this can't be used to
+  /// probe which emails are registered.
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
@@ -176,10 +186,13 @@ class AuthRepository {
     await _firebaseAuth.currentUser?.reload();
   }
 
+  /// Re-sends the verification email to whoever is currently signed in.
   Future<void> resendEmailVerification() async {
     await _firebaseAuth.currentUser?.sendEmailVerification();
   }
 
+  /// Signs out of both Firebase and Google, so the account picker shows up
+  /// again next time rather than silently reusing the last Google session.
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
     try {

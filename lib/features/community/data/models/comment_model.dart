@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/comment_entity.dart';
 
-/// Data model representing a comment.
+/// Adds Firestore (de)serialization on top of [CommentEntity].
 class CommentModel extends CommentEntity {
   const CommentModel({
     required super.id,
@@ -11,7 +11,9 @@ class CommentModel extends CommentEntity {
     required super.createdAt,
   });
 
-  /// Factory constructor to create a CommentModel from Map data.
+  /// Builds a comment from a sub-collection document's field data, using
+  /// [documentId] as the id. Missing fields fall back to empty values
+  /// rather than throwing.
   factory CommentModel.fromMap(Map<String, dynamic> map, String documentId) {
     return CommentModel(
       id: documentId,
@@ -22,14 +24,15 @@ class CommentModel extends CommentEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory CommentModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return CommentModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the comment's slot in a post's `comments`
+  /// sub-collection.
   Map<String, dynamic> toMap() {
     return {
       'authorId': authorId,

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/notification_entity.dart';
 
-/// Data model representing a user notification.
+/// Adds Firestore (de)serialization on top of [NotificationEntity].
 class NotificationModel extends NotificationEntity {
   const NotificationModel({
     required super.id,
@@ -12,7 +12,9 @@ class NotificationModel extends NotificationEntity {
     required super.createdAt,
   });
 
-  /// Factory constructor to create a NotificationModel from Map data.
+  /// Builds a notification from a Firestore document's field data, using
+  /// [documentId] as the id. Missing fields fall back to empty/false
+  /// values rather than throwing.
   factory NotificationModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -27,14 +29,14 @@ class NotificationModel extends NotificationEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory NotificationModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return NotificationModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the `notifications` document.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -45,7 +47,8 @@ class NotificationModel extends NotificationEntity {
     };
   }
 
-  /// Utility to copy the model with modifications.
+  /// Returns a copy with [isRead] replaced — the only field a
+  /// notification's lifecycle actually mutates after it's sent.
   NotificationModel copyWith({bool? isRead}) {
     return NotificationModel(
       id: id,

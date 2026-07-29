@@ -1,7 +1,7 @@
 import '../entities/comment_entity.dart';
 import '../entities/community_post_entity.dart';
 
-/// Abstract definition of database operations regarding Community Forum entities.
+/// Storage-agnostic contract for reading and writing community posts and their comments.
 abstract class CommunityRepository {
   /// Retrieves all community discussion posts.
   Future<List<CommunityPostEntity>> getPosts();

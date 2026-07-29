@@ -1,6 +1,6 @@
 import '../entities/user_entity.dart';
 
-/// Abstract definition of database operations regarding User entities.
+/// Storage-agnostic contract for reading and writing user profile documents.
 abstract class UserRepository {
   /// Fetches a user's details by their database UID.
   Future<UserEntity?> getUserById(String uid);

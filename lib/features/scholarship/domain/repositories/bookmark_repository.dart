@@ -1,6 +1,6 @@
 import '../entities/bookmark_entity.dart';
 
-/// Abstract definition of database operations regarding Bookmark entities.
+/// Storage-agnostic contract for reading and writing a user's bookmarked scholarships.
 abstract class BookmarkRepository {
   /// Retrieves all bookmarks for a specific user.
   Future<List<BookmarkEntity>> getBookmarksByUserId(String userId);

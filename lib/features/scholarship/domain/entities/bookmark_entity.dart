@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a bookmarked scholarship.
+/// Records that a user bookmarked a specific scholarship.
 class BookmarkEntity extends Equatable {
   final String id; // structured as: userId_scholarshipId
   final String userId;

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/mentorship_session_entity.dart';
 
-/// Data model representing a mentorship session.
+/// Adds Firestore (de)serialization on top of [MentorshipSessionEntity].
 class MentorshipSessionModel extends MentorshipSessionEntity {
   const MentorshipSessionModel({
     required super.id,
@@ -16,7 +16,9 @@ class MentorshipSessionModel extends MentorshipSessionEntity {
     required super.updatedAt,
   });
 
-  /// Factory constructor to create a MentorshipSessionModel from Map data.
+  /// Builds a session from a Firestore document's field data, using
+  /// [documentId] as the id. Missing fields fall back to empty values (or
+  /// 'pending' for [status]) rather than throwing.
   factory MentorshipSessionModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -36,14 +38,14 @@ class MentorshipSessionModel extends MentorshipSessionEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory MentorshipSessionModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return MentorshipSessionModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the `mentorship_sessions` document.
   Map<String, dynamic> toMap() {
     return {
       'studentId': studentId,
@@ -58,7 +60,9 @@ class MentorshipSessionModel extends MentorshipSessionEntity {
     };
   }
 
-  /// Utility to copy the model with modifications.
+  /// Returns a copy with the given fields replaced — a status change, a
+  /// rescheduled time, an added meeting link. [studentId] and [mentorId]
+  /// are fixed once a session is booked, so they're not parameters here.
   MentorshipSessionModel copyWith({
     String? status,
     DateTime? scheduledAt,

@@ -13,6 +13,7 @@ class FirestoreNotificationRepository implements NotificationRepository {
   CollectionReference<Map<String, dynamic>> get _notificationsCollection =>
       _firestore.collection('notifications');
 
+  /// Notifications targeted at [userId], newest first.
   @override
   Future<List<NotificationEntity>> getNotificationsByUserId(
     String userId,
@@ -30,6 +31,8 @@ class FirestoreNotificationRepository implements NotificationRepository {
     }
   }
 
+  /// Creates a new notification, auto-generating an id when
+  /// [notification.id] is empty; overwrites the existing document otherwise.
   @override
   Future<void> sendNotification(NotificationEntity notification) async {
     try {
@@ -55,6 +58,8 @@ class FirestoreNotificationRepository implements NotificationRepository {
     }
   }
 
+  /// Flips `isRead` to true with a single-field update, rather than
+  /// round-tripping the whole notification through the model.
   @override
   Future<void> markAsRead(String id) async {
     try {

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/community_post_entity.dart';
 
-/// Data model representing a community forum post.
+/// Adds Firestore (de)serialization on top of [CommunityPostEntity].
 class CommunityPostModel extends CommunityPostEntity {
   const CommunityPostModel({
     required super.id,
@@ -15,7 +15,9 @@ class CommunityPostModel extends CommunityPostEntity {
     required super.updatedAt,
   });
 
-  /// Factory constructor to create a CommunityPostModel from Map data.
+  /// Builds a post from a Firestore document's field data, using
+  /// [documentId] as the id. Falls back to empty/zero values on missing
+  /// fields rather than throwing.
   factory CommunityPostModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -33,14 +35,16 @@ class CommunityPostModel extends CommunityPostEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory CommunityPostModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return CommunityPostModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the `community_posts` document. [likesCount] and
+  /// [commentsCount] are written here as plain values — the repository is
+  /// what's responsible for keeping them accurate on likes/comments.
   Map<String, dynamic> toMap() {
     return {
       'authorId': authorId,
@@ -54,7 +58,9 @@ class CommunityPostModel extends CommunityPostEntity {
     };
   }
 
-  /// Utility to copy the model with modifications.
+  /// Returns a copy with the given fields replaced — an edited [content],
+  /// or updated like/comment counts. Author details and [id] don't change
+  /// after a post is created, so they're not parameters here.
   CommunityPostModel copyWith({
     String? content,
     int? likesCount,
