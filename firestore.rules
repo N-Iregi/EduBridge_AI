@@ -15,8 +15,8 @@ service cloud.firestore {
     // Users Collection
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isOwner(userId);
+      allow create: if isAuthenticated() && request.auth.uid == userId && request.resource.data.role in ['student', 'mentor'];
+      allow update: if isOwner(userId) && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role);
       allow delete: if false; // Profiles cannot be deleted via app client
     }
 
