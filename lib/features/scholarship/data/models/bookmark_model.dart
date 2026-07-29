@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/bookmark_entity.dart';
 
-/// Data model representing a bookmark mapping document.
+/// Adds Firestore (de)serialization on top of [BookmarkEntity].
 class BookmarkModel extends BookmarkEntity {
   const BookmarkModel({
     required super.id,
@@ -10,7 +10,9 @@ class BookmarkModel extends BookmarkEntity {
     required super.bookmarkedAt,
   });
 
-  /// Factory constructor to create a BookmarkModel from Map data.
+  /// Builds a bookmark from a Firestore document's field data, using
+  /// [documentId] as the id — in practice the composite
+  /// `userId_scholarshipId` string described on [BookmarkEntity].
   factory BookmarkModel.fromMap(Map<String, dynamic> map, String documentId) {
     return BookmarkModel(
       id: documentId,
@@ -21,14 +23,15 @@ class BookmarkModel extends BookmarkEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory BookmarkModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return BookmarkModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the `bookmarks` document. There's no `copyWith` here —
+  /// a bookmark is either created or removed, never edited in place.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,

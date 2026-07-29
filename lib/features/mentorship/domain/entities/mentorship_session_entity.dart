@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a mentorship session between a student and a mentor.
+/// A booked or requested mentorship session between a student and a mentor.
 class MentorshipSessionEntity extends Equatable {
   final String id;
   final String studentId;

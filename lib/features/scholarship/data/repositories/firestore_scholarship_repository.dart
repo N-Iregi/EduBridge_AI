@@ -13,6 +13,7 @@ class FirestoreScholarshipRepository implements ScholarshipRepository {
   CollectionReference<Map<String, dynamic>> get _scholarshipsCollection =>
       _firestore.collection('scholarships');
 
+  /// Every scholarship listing, newest first.
   @override
   Future<List<ScholarshipEntity>> getScholarships() async {
     try {
@@ -40,6 +41,11 @@ class FirestoreScholarshipRepository implements ScholarshipRepository {
     }
   }
 
+  /// Scholarships in [category], newest first. Filtering on one field and
+  /// ordering on another is exactly the shape of query Firestore requires
+  /// a composite index for once a collection is large enough to need one —
+  /// if this starts throwing a "failed-precondition" error in production,
+  /// that's the fix.
   @override
   Future<List<ScholarshipEntity>> getScholarshipsByCategory(
     String category,
@@ -57,6 +63,9 @@ class FirestoreScholarshipRepository implements ScholarshipRepository {
     }
   }
 
+  /// Creates a new listing, auto-generating an id when [scholarship.id] is
+  /// empty; overwrites the existing document otherwise. Intended for admin
+  /// use, per [ScholarshipRepository].
   @override
   Future<void> createScholarship(ScholarshipEntity scholarship) async {
     try {
@@ -73,7 +82,7 @@ class FirestoreScholarshipRepository implements ScholarshipRepository {
         createdAt: scholarship.createdAt,
         updatedAt: scholarship.updatedAt,
       );
-      // If scholarship.id is empty or we want firestore to auto-generate:
+      // Empty id means this is a new scholarship — let Firestore generate one.
       if (scholarship.id.isEmpty) {
         final docRef = _scholarshipsCollection.doc();
         await docRef.set({...scholarshipModel.toMap(), 'id': docRef.id});

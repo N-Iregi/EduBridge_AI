@@ -13,6 +13,7 @@ class FirestoreUserRepository implements UserRepository {
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
       _firestore.collection('users');
 
+  /// The profile at `users/{uid}`, or null if it doesn't exist.
   @override
   Future<UserEntity?> getUserById(String uid) async {
     try {
@@ -22,11 +23,13 @@ class FirestoreUserRepository implements UserRepository {
       }
       return null;
     } catch (e) {
-      // In a real-world scenario, you might want to log this or throw a custom exception
       rethrow;
     }
   }
 
+  /// Writes the profile document at `users/{user.id}`. In practice this is
+  /// called from [AuthRepository] right after the Firebase Auth account is
+  /// created, not used standalone.
   @override
   Future<void> createUser(UserEntity user) async {
     try {
@@ -46,6 +49,7 @@ class FirestoreUserRepository implements UserRepository {
     }
   }
 
+  /// Overwrites the editable profile fields for an existing user.
   @override
   Future<void> updateUser(UserEntity user) async {
     try {
@@ -65,6 +69,10 @@ class FirestoreUserRepository implements UserRepository {
     }
   }
 
+  /// Deletes the Firestore profile document only. This does not delete the
+  /// Firebase Auth account itself — a full account deletion needs a
+  /// separate call through [AuthRepository]/`FirebaseAuth`, or the user is
+  /// left able to sign in with no profile.
   @override
   Future<void> deleteUser(String uid) async {
     try {

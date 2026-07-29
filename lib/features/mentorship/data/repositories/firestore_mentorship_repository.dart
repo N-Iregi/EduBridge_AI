@@ -13,6 +13,7 @@ class FirestoreMentorshipRepository implements MentorshipRepository {
   CollectionReference<Map<String, dynamic>> get _sessionsCollection =>
       _firestore.collection('mentorship_sessions');
 
+  /// Sessions requested by [studentId], most recently scheduled first.
   @override
   Future<List<MentorshipSessionEntity>> getSessionsByStudentId(
     String studentId,
@@ -30,6 +31,7 @@ class FirestoreMentorshipRepository implements MentorshipRepository {
     }
   }
 
+  /// Sessions hosted by [mentorId], most recently scheduled first.
   @override
   Future<List<MentorshipSessionEntity>> getSessionsByMentorId(
     String mentorId,
@@ -47,6 +49,8 @@ class FirestoreMentorshipRepository implements MentorshipRepository {
     }
   }
 
+  /// Creates a new session, auto-generating an id when [session.id] is
+  /// empty; overwrites the existing document otherwise.
   @override
   Future<void> bookSession(MentorshipSessionEntity session) async {
     try {
@@ -95,6 +99,10 @@ class FirestoreMentorshipRepository implements MentorshipRepository {
     }
   }
 
+  /// Deletes the session outright. Note this bypasses the 'cancelled'
+  /// value [MentorshipSessionEntity.status] defines — callers that want to
+  /// keep a record of the cancellation should call [updateSession] with
+  /// status 'cancelled' instead of this method.
   @override
   Future<void> cancelSession(String id) async {
     try {

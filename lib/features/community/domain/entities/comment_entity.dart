@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a comment on a forum post.
+/// A single comment left on a community post.
 class CommentEntity extends Equatable {
   final String id;
   final String authorId;

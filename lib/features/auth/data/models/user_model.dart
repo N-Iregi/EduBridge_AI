@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/user_entity.dart';
 
-/// Data model representing a user, incorporating Firestore serialization.
+/// Adds Firestore (de)serialization on top of [UserEntity].
 class UserModel extends UserEntity {
   const UserModel({
     required super.id,
@@ -14,7 +14,10 @@ class UserModel extends UserEntity {
     required super.updatedAt,
   });
 
-  /// Factory constructor to create a UserModel from a Map and document ID.
+  /// Builds a user from a Firestore document's field data, using
+  /// [documentId] as the id since the map itself doesn't carry it. Falls
+  /// back to empty strings (and 'student' for [role]) on missing fields
+  /// rather than throwing.
   factory UserModel.fromMap(Map<String, dynamic> map, String documentId) {
     return UserModel(
       id: documentId,
@@ -28,14 +31,15 @@ class UserModel extends UserEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory UserModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return UserModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore storage.
+  /// Field data for the `users/{uid}` document. Excludes the id, which is
+  /// carried by the document path rather than a field.
   Map<String, dynamic> toMap() {
     return {
       'email': email,
@@ -48,7 +52,9 @@ class UserModel extends UserEntity {
     };
   }
 
-  /// Utility to copy the model with optional updated values.
+  /// Returns a copy with the given fields replaced — covers the profile
+  /// fields a user can actually edit (name, role, bio, photo). [id],
+  /// [email], and [createdAt] are intentionally not editable this way.
   UserModel copyWith({
     String? fullName,
     String? role,

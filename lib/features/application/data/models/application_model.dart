@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/application_entity.dart';
 
-/// Data model representing a scholarship application.
+/// Adds Firestore (de)serialization on top of [ApplicationEntity].
 class ApplicationModel extends ApplicationEntity {
   const ApplicationModel({
     required super.id,
@@ -16,7 +16,11 @@ class ApplicationModel extends ApplicationEntity {
     required super.updatedAt,
   });
 
-  /// Factory constructor to create an ApplicationModel from Map data.
+  /// Builds an application from a Firestore document's field data. The
+  /// document id isn't part of the map itself, so it's passed separately
+  /// as [documentId]. A missing or malformed field falls back to an empty
+  /// value (or 'applied' for [status]) rather than throwing, so a
+  /// partially-written document still deserializes.
   factory ApplicationModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -35,14 +39,15 @@ class ApplicationModel extends ApplicationEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a query/document snapshot.
   factory ApplicationModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return ApplicationModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for a Firestore `set`/`update` call. The id itself is never
+  /// included — Firestore already knows it from the document path.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -57,7 +62,9 @@ class ApplicationModel extends ApplicationEntity {
     };
   }
 
-  /// Utility to copy the model with modifications.
+  /// Returns a copy with the given fields replaced. Deliberately scoped to
+  /// what actually changes after submission — status updates, new
+  /// documents, or notes — rather than every field on the model.
   ApplicationModel copyWith({
     String? status,
     List<String>? documents,

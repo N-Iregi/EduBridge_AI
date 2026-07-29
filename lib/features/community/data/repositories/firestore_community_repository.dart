@@ -19,6 +19,7 @@ class FirestoreCommunityRepository implements CommunityRepository {
     String postId,
   ) => _postsCollection.doc(postId).collection('comments');
 
+  /// All community posts, newest first.
   @override
   Future<List<CommunityPostEntity>> getPosts() async {
     try {
@@ -46,6 +47,8 @@ class FirestoreCommunityRepository implements CommunityRepository {
     }
   }
 
+  /// Creates a new post, auto-generating an id when [post.id] is empty;
+  /// overwrites the existing document otherwise.
   @override
   Future<void> createPost(CommunityPostEntity post) async {
     try {
@@ -92,12 +95,12 @@ class FirestoreCommunityRepository implements CommunityRepository {
     }
   }
 
+  /// Deletes the post and every comment in its `comments` sub-collection.
   @override
   Future<void> deletePost(String id) async {
     try {
-      // In a production application, sub-collection comments should be deleted
-      // recursively. In Firestore client SDKs, sub-collections must be fetched and
-      // deleted individually or handled in a cloud function.
+      // Firestore doesn't cascade-delete sub-collections, so the comments
+      // under this post have to be fetched and deleted explicitly.
       final commentsSnapshot = await _commentsCollection(id).get();
       final batch = _firestore.batch();
       for (final doc in commentsSnapshot.docs) {
@@ -110,14 +113,14 @@ class FirestoreCommunityRepository implements CommunityRepository {
     }
   }
 
+  /// Comments under [postId], oldest first, so a thread reads top to bottom.
   @override
   Future<List<CommentEntity>> getCommentsForPost(String postId) async {
     try {
       final snapshot = await _commentsCollection(postId)
-          .orderBy('createdAt') // Simple ordering by creation time
+          .orderBy('createdAt')
           .get();
 
-      // Since comments collection might have various orders, we sort by createdAt ascending
       final docs = snapshot.docs;
       final comments = docs
           .map((doc) => CommentModel.fromSnapshot(doc))
@@ -129,6 +132,9 @@ class FirestoreCommunityRepository implements CommunityRepository {
     }
   }
 
+  /// Adds a comment under [postId] and increments the post's
+  /// `commentsCount` in the same transaction, so the count can't drift out
+  /// of sync with what's actually in the sub-collection.
   @override
   Future<void> addCommentToPost(String postId, CommentEntity comment) async {
     try {
@@ -167,6 +173,8 @@ class FirestoreCommunityRepository implements CommunityRepository {
     }
   }
 
+  /// Deletes a comment and decrements the post's `commentsCount` in the
+  /// same transaction, floored at zero.
   @override
   Future<void> deleteComment(String postId, String commentId) async {
     try {

@@ -1,6 +1,6 @@
 import '../entities/mentorship_session_entity.dart';
 
-/// Abstract definition of database operations regarding Mentorship Session entities.
+/// Storage-agnostic contract for reading and writing mentorship session bookings.
 abstract class MentorshipRepository {
   /// Retrieves sessions requested by a specific student.
   Future<List<MentorshipSessionEntity>> getSessionsByStudentId(
