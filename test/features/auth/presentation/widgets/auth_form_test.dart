@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:edubridge_ai/presentation/widgets/auth_form.dart';
+import 'package:edubridge_ai/features/auth/presentation/widgets/auth_form.dart';
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(home: Scaffold(body: child));

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:edubridge_ai/core/auth_error_mapper.dart';
+import 'package:edubridge_ai/features/auth/domain/auth_error_mapper.dart';
 
 void main() {
   group('AuthErrorMapper', () {

@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../../../core/auth_error_mapper.dart';
-import '../../../../core/role_validator.dart';
+import 'package:edubridge_ai/features/auth/domain/auth_error_mapper.dart';
+import 'package:edubridge_ai/core/role_validator.dart';
 
 /// Thin wrapper around FirebaseAuth + GoogleSignIn + the `users` collection.
 ///
