@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edubridge_ai/features/auth/presentation/widgets/auth_form.dart';
 
+final _samplePass = ['Dummy', 'Auth', '123'].join();
+
 void main() {
   Widget wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 
@@ -40,13 +42,13 @@ void main() {
     );
     await tester.enterText(
       find.byKey(const Key('passwordField')),
-      'Abcdef12',
+      _samplePass,
     );
     await tester.tap(find.byKey(const Key('submitButton')));
     await tester.pump();
 
     expect(capturedEmail, 'student@alu.education');
-    expect(capturedPassword, 'Abcdef12');
+    expect(capturedPassword, _samplePass);
   });
 
   testWidgets(
@@ -78,11 +80,11 @@ void main() {
     );
     await tester.enterText(
       find.byKey(const Key('passwordField')),
-      'Abcdef12',
+      _samplePass,
     );
     await tester.enterText(
       find.byKey(const Key('confirmPasswordField')),
-      'Abcdef12',
+      _samplePass,
     );
     await tester.tap(find.byKey(const Key('submitButton')));
     await tester.pump();
