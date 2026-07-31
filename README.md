@@ -95,11 +95,11 @@ Each feature follows a `presentation / domain / data` layered structure, keeping
 ## Screenshots
 
 [Insert screenshots of key screens here — Home, Scholarship Discovery, AI Mentor Chat, Community Forum, etc.]
-
 ## Known Limitations
 
-See the "Known Limitations and Future Work" section of the project report for details on current gaps (placeholder AI responses, local-only data on some screens, etc.).
+- AI Mentor Chat and Essay Assistant return placeholder responses rather than real AI-generated content; a live AI backend integration is planned.
+- Career Pathways, CV Builder, and Deadline Tracker use in-app state rather than Firestore, pending dedicated backend models.
+- Deadline Tracker does not yet trigger real push or local notifications.
+- Community Forum's like feature does not track per-user likes, so a post could currently be liked more than once by the same user.
+- Only email verification is implemented as an additional auth safeguard; OTP was not implemented.
 
-## Team
-
-Built by Group [#] for the Mobile Application Development course, African Leadership University.
