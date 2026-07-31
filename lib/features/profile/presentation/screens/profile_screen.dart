@@ -3,13 +3,17 @@ import '../../../../core/theme/app_colors.dart';
 
 // Profile & Settings screen — matches the Figma frame with
 // Notifications / Security / Language / Support rows and logout.
+//
+// userProgram/userLocation from the original Figma frame were dropped:
+// UserEntity has no program or location field, so there was nothing real
+// to show there. userBio (which does exist on UserEntity) takes their
+// place as the header's subtitle.
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
     super.key,
     required this.userName,
-    required this.userProgram,
-    required this.userLocation,
     required this.onLogout,
+    this.userBio,
     this.onNotificationsTap,
     this.onSecurityTap,
     this.onLanguageTap,
@@ -18,8 +22,7 @@ class ProfileScreen extends StatelessWidget {
   });
 
   final String userName;
-  final String userProgram;
-  final String userLocation;
+  final String? userBio;
   final VoidCallback onLogout;
   final VoidCallback? onNotificationsTap;
   final VoidCallback? onSecurityTap;
@@ -50,8 +53,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             _ProfileHeader(
               name: userName,
-              program: userProgram,
-              location: userLocation,
+              bio: userBio,
               imageUrl: profileImageUrl,
             ),
             const SizedBox(height: 20),
@@ -86,14 +88,12 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileHeader extends StatelessWidget {
   const _ProfileHeader({
     required this.name,
-    required this.program,
-    required this.location,
+    this.bio,
     this.imageUrl,
   });
 
   final String name;
-  final String program;
-  final String location;
+  final String? bio;
   final String? imageUrl;
 
   @override
@@ -125,17 +125,14 @@ class _ProfileHeader extends StatelessWidget {
               color: AppColors.deepNavy,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            program,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            location,
-            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-          ),
+          if (bio != null && bio!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              bio!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            ),
+          ],
         ],
       ),
     );

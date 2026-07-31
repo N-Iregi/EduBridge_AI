@@ -6,6 +6,14 @@ abstract class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Fired once when [AuthBloc] is created, to check whether Firebase
+/// already has a cached session before any button is pressed — this is
+/// what makes "signed in across a cold restart" show up as an [AuthState]
+/// at all.
+class AppStarted extends AuthEvent {
+  const AppStarted();
+}
+
 class SignInRequested extends AuthEvent {
   final String email;
   final String password;

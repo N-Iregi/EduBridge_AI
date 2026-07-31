@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repositories/firebase_auth_repository.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -10,16 +9,14 @@ import '../screens/reset_password_screen.dart';
 
 enum _AuthView { login, signup, reset }
 
+/// Uses the [AuthBloc] provided at the app root (see main.dart) rather
+/// than creating its own — signing in here needs to still be visible
+/// after navigating back to the dev menu or any other screen.
 class AuthFlowPage extends StatelessWidget {
   const AuthFlowPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthBloc(FirebaseAuthRepository()),
-      child: const _AuthFlowView(),
-    );
-  }
+  Widget build(BuildContext context) => const _AuthFlowView();
 }
 
 class _AuthFlowView extends StatefulWidget {

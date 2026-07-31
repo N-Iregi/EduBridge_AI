@@ -7,11 +7,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;
 
   AuthBloc(this.repository) : super(AuthInitial()) {
+    on<AppStarted>(_onAppStarted);
     on<SignInRequested>(_onSignIn);
     on<SignUpRequested>(_onSignUp);
     on<GoogleSignInRequested>(_onGoogleSignIn);
     on<PasswordResetRequested>(_onPasswordReset);
     on<SignOutRequested>(_onSignOut);
+
+    add(const AppStarted());
+  }
+
+  Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
+    // authStateChanges (not the synchronous currentUser getter) is the one
+    // that looks the cached session up in Firestore, so a returning user's
+    // fullName/profilePictureUrl come back populated instead of blank.
+    final user = await repository.authStateChanges.first;
+    emit(user != null ? AuthAuthenticated(user) : AuthUnauthenticated());
   }
 
   Future<void> _onSignIn(SignInRequested event, Emitter<AuthState> emit) async {
