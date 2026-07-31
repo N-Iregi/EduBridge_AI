@@ -37,7 +37,8 @@ class _AuthFlowViewState extends State<_AuthFlowView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Welcome, ${state.user.fullName}!')),
           );
-          // TODO: navigate to the real Home Dashboard once available.
+          // AuthGate (the widget above this in the tree) reacts to the same
+          // state change and swaps this page out — no navigation needed here.
         }
         if (state is AuthPasswordResetSent) {
           ScaffoldMessenger.of(context).showSnackBar(

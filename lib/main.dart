@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/services/preferences_service.dart';
 import 'features/auth/data/repositories/firebase_auth_repository.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/home/presentation/pages/dev_menu_page.dart';
+import 'features/auth/presentation/pages/auth_gate.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'firebase_options.dart';
 
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
               AppThemeMode.dark => ThemeMode.dark,
               AppThemeMode.system => ThemeMode.system,
             },
-            home: const DevMenuPage(),
+            home: const AuthGate(),
           );
         },
       ),
