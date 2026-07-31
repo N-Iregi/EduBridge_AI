@@ -114,6 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 22),
 
                 AuthTextField(
+                  key: const Key('fullNameField'),
                   label: 'Full name',
                   controller: _nameController,
                   hintText: 'Amara Okafor',
@@ -127,6 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 14),
 
                 AuthTextField(
+                  key: const Key('emailField'),
                   label: 'Email address',
                   controller: _emailController,
                   hintText: 'student@example.com',
@@ -144,6 +146,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 14),
 
                 AuthTextField(
+                  key: const Key('passwordField'),
                   label: 'Password',
                   controller: _passwordController,
                   hintText: '••••••••',
@@ -173,6 +176,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 14),
 
                 AuthTextField(
+                  key: const Key('confirmPasswordField'),
                   label: 'Confirm password',
                   controller: _confirmPasswordController,
                   hintText: '••••••••',
@@ -209,6 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
 
                 PrimaryAuthButton(
+                  key: const Key('createAccountButton'),
                   label: 'Create account',
                   onPressed: _handleCreateAccount,
                   isLoading: widget.isLoading,
@@ -217,7 +222,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const OrDivider(),
                 const SizedBox(height: 18),
 
-                GoogleSignInButton(onPressed: widget.onGoogleSignIn),
+                GoogleSignInButton(
+                  key: const Key('googleSignInButton'),
+                  onPressed: widget.onGoogleSignIn,
+                ),
                 const SizedBox(height: 18),
 
                 Row(
@@ -229,6 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           fontSize: 12, color: AppColors.textSecondary),
                     ),
                     GestureDetector(
+                      key: const Key('signInLink'),
                       onTap: widget.onSignIn,
                       child: const Text(
                         'Sign in',

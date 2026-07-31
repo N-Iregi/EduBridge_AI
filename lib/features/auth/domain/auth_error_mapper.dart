@@ -29,3 +29,14 @@ class AuthErrorMapper {
     }
   }
 }
+
+/// Thrown by [AuthRepository]'s implementations with a message already run
+/// through [AuthErrorMapper], so callers can show `error.toString()`
+/// straight to the user instead of a raw Firebase error.
+class AuthException implements Exception {
+  AuthException(this.message);
+  final String message;
+
+  @override
+  String toString() => message;
+}
