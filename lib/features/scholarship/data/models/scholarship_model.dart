@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/scholarship_entity.dart';
 
-/// Data model representing a scholarship program.
+/// Adds Firestore (de)serialization on top of [ScholarshipEntity].
 class ScholarshipModel extends ScholarshipEntity {
   const ScholarshipModel({
     required super.id,
@@ -17,7 +17,9 @@ class ScholarshipModel extends ScholarshipEntity {
     required super.updatedAt,
   });
 
-  /// Factory constructor to create a ScholarshipModel from Map data.
+  /// Builds a scholarship from a Firestore document's field data, using
+  /// [documentId] as the id. Falls back to empty values (or 'general' for
+  /// [category]) on missing fields rather than throwing.
   factory ScholarshipModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -37,14 +39,14 @@ class ScholarshipModel extends ScholarshipEntity {
     );
   }
 
-  /// Factory constructor to deserialize a Firestore DocumentSnapshot.
+  /// Same as [fromMap], but reads straight from a document snapshot.
   factory ScholarshipModel.fromSnapshot(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return ScholarshipModel.fromMap(snapshot.data() ?? {}, snapshot.id);
   }
 
-  /// Converts the model into a Map format suitable for Firestore.
+  /// Field data for the `scholarships` document.
   Map<String, dynamic> toMap() {
     return {
       'title': title,
@@ -60,7 +62,8 @@ class ScholarshipModel extends ScholarshipEntity {
     };
   }
 
-  /// Utility to copy the model with modifications.
+  /// Returns a copy with the given fields replaced — used when an admin
+  /// edits a listing. [id] and [createdAt] stay fixed.
   ScholarshipModel copyWith({
     String? title,
     String? description,

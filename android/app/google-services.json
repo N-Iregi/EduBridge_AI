@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "57193630660",
+    "project_id": "edubridge-ai-6e344",
+    "storage_bucket": "edubridge-ai-6e344.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57193630660:android:7e8968bd4fc0d97869f291",
+        "android_client_info": {
+          "package_name": "com.edubridge.edubridge_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57193630660-c8d210qp32n8tq41bstmuddgu2poq5et.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzx0_fPIDOcvI9-GU3K-JVMujuKuF0JMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57193630660-c8d210qp32n8tq41bstmuddgu2poq5et.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

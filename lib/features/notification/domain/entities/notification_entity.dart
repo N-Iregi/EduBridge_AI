@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a system or deadline notification.
+/// A single in-app notification, e.g. a deadline reminder or system message.
 class NotificationEntity extends Equatable {
   final String id;
   final String userId;

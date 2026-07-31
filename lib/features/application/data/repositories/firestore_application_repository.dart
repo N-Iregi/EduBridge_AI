@@ -13,6 +13,7 @@ class FirestoreApplicationRepository implements ApplicationRepository {
   CollectionReference<Map<String, dynamic>> get _applicationsCollection =>
       _firestore.collection('applications');
 
+  /// Applications submitted by [userId], most recently applied-to first.
   @override
   Future<List<ApplicationEntity>> getApplicationsByUserId(String userId) async {
     try {
@@ -41,6 +42,8 @@ class FirestoreApplicationRepository implements ApplicationRepository {
     }
   }
 
+  /// Creates a new application document, auto-generating an id when
+  /// [application.id] is empty; overwrites the existing document otherwise.
   @override
   Future<void> submitApplication(ApplicationEntity application) async {
     try {
@@ -93,6 +96,9 @@ class FirestoreApplicationRepository implements ApplicationRepository {
     }
   }
 
+  /// Deletes the application outright — [ApplicationEntity.status] has no
+  /// 'cancelled' value, so removing the record is how cancellation is
+  /// represented.
   @override
   Future<void> cancelApplication(String id) async {
     try {

@@ -1,6 +1,6 @@
 import '../entities/application_entity.dart';
 
-/// Abstract definition of database operations regarding Scholarship Application entities.
+/// Storage-agnostic contract for reading and writing scholarship applications.
 abstract class ApplicationRepository {
   /// Retrieves all applications submitted by a specific user.
   Future<List<ApplicationEntity>> getApplicationsByUserId(String userId);

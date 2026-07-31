@@ -1,6 +1,6 @@
 import '../entities/scholarship_entity.dart';
 
-/// Abstract definition of database operations regarding Scholarship entities.
+/// Storage-agnostic contract for reading and writing scholarship listings.
 abstract class ScholarshipRepository {
   /// Retrieves all scholarship listings.
   Future<List<ScholarshipEntity>> getScholarships();

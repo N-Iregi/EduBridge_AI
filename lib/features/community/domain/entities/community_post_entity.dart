@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a post in the community forum.
+/// A post in the community forum.
 class CommunityPostEntity extends Equatable {
   final String id;
   final String authorId;

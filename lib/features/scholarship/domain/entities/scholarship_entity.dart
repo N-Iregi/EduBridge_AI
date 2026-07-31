@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Entity class representing a scholarship program.
+/// A scholarship program listing.
 class ScholarshipEntity extends Equatable {
   final String id;
   final String title;
