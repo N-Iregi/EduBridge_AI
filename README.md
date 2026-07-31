@@ -93,8 +93,16 @@ lib/
 Each feature follows a `presentation / domain / data` layered structure, keeping UI, business logic, and data access separated.
 
 ## Screenshots
+<img width="436" height="896" alt="WhatsApp Image 2026-07-31 at 10 55 37 PM" src="https://github.com/user-attachments/assets/72a7f985-124e-4134-96c7-daae470084bf" />
+<img width="434" height="894" alt="WhatsApp Image 2026-07-31 at 10 55 36 PM (1)" src="https://github.com/user-attachments/assets/932fbefe-12e1-4dbc-8ec5-8eeae41d09ec" />
+<img width="436" height="899" alt="WhatsApp Image 2026-07-31 at 10 55 36 PM" src="https://github.com/user-attachments/assets/5c7d1bae-bb5b-4fff-a0ca-534ede9beebf" />
+<img width="426" height="898" alt="WhatsApp Image 2026-07-31 at 10 55 35 PM" src="https://github.com/user-attachments/assets/841f417d-a105-460c-a218-18cf4563c7b6" />
 
-[Insert screenshots of key screens here — Home, Scholarship Discovery, AI Mentor Chat, Community Forum, etc.]
+
+
+
+
+
 ## Known Limitations
 
 - AI Mentor Chat and Essay Assistant return placeholder responses rather than real AI-generated content; a live AI backend integration is planned.
