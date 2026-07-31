@@ -53,6 +53,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextButton.icon(
+                  key: const Key('backToSignInButton'),
                   onPressed: widget.onBackToSignIn,
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
@@ -98,6 +99,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const SizedBox(height: 24),
 
                 AuthTextField(
+                  key: const Key('emailField'),
                   label: 'Email address',
                   controller: _emailController,
                   hintText: 'student@example.com',
@@ -132,6 +134,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ],
 
                 PrimaryAuthButton(
+                  key: const Key('sendResetLinkButton'),
                   label: 'Send reset link',
                   onPressed: _handleSendLink,
                   isLoading: widget.isLoading,
@@ -146,6 +149,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                     ),
                     GestureDetector(
+                      key: const Key('resendLink'),
                       onTap: _handleSendLink,
                       child: const Text(
                         'Resend',

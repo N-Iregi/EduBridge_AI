@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 /// App entry point.
 ///
 /// This is still the stock `flutter create` starter — it doesn't call
-/// `Firebase.initializeApp()` and doesn't route to [AuthForm] or any other
-/// screen built under lib/features. Wiring those up is what turns this
-/// from a demo into the real app.
+/// `Firebase.initializeApp()` and doesn't route to `LoginScreen` or any
+/// other screen built under lib/features. Wiring those up is what turns
+/// this from a demo into the real app.
 void main() {
   runApp(const MyApp());
 }

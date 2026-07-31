@@ -8,6 +8,16 @@ abstract class AuthRepository {
   /// Returns the currently signed-in user or null if unauthenticated.
   UserEntity? get currentUser;
 
+  /// Whether the signed-in user has confirmed their email address.
+  /// Reflects whatever was cached at last sign-in or [reloadUser] call —
+  /// call [reloadUser] first if you need the up-to-the-second value.
+  bool get isEmailVerified;
+
+  /// Refreshes the cached Firebase user so [isEmailVerified] picks up a
+  /// verification that happened since sign-in — call after the user taps
+  /// "I've verified my email".
+  Future<void> reloadUser();
+
   /// Authenticates user using Google Sign-In protocol.
   /// Obtains Google OAuth credentials and signs in with Firebase.
   /// Automatically provisions user profile in Firestore if first-time sign in.

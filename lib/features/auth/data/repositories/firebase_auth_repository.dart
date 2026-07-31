@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:edubridge_ai/core/role_validator.dart';
+import '../../domain/auth_error_mapper.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/user_repository.dart';
@@ -33,6 +35,14 @@ class FirebaseAuthRepository implements AuthRepository {
     final firebaseUser = _firebaseAuth.currentUser;
     if (firebaseUser == null) return null;
     return _mapFirebaseUserToEntity(firebaseUser);
+  }
+
+  @override
+  bool get isEmailVerified => _firebaseAuth.currentUser?.emailVerified ?? false;
+
+  @override
+  Future<void> reloadUser() async {
+    await _firebaseAuth.currentUser?.reload();
   }
 
   @override
@@ -83,6 +93,8 @@ class FirebaseAuthRepository implements AuthRepository {
       }
 
       return existingUser;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(AuthErrorMapper.map(e));
     } catch (e) {
       rethrow;
     }
@@ -103,11 +115,15 @@ class FirebaseAuthRepository implements AuthRepository {
 
       return await _userRepository.getUserById(firebaseUser.uid) ??
           _mapFirebaseUserToEntity(firebaseUser);
-    } catch (e) {
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(AuthErrorMapper.map(e));
     }
   }
 
+  /// [role] must be 'student' or 'mentor' — 'admin' is rejected here as a
+  /// client-side safeguard, but this is defense in depth only. The real
+  /// fix has to be a Firestore security rule restricting the `role` field
+  /// on create; ask whoever owns firestore.rules to add it.
   @override
   Future<UserEntity?> signUpWithEmailAndPassword({
     required String email,
@@ -115,35 +131,55 @@ class FirebaseAuthRepository implements AuthRepository {
     required String fullName,
     required String role,
   }) async {
+    if (!RoleValidator.isValidRegistrationRole(role)) {
+      throw ArgumentError.value(role, 'role', 'Must be student or mentor');
+    }
+
+    final UserCredential userCredential;
     try {
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final firebaseUser = userCredential.user;
-      if (firebaseUser == null) return null;
-
-      final newUser = UserEntity(
-        id: firebaseUser.uid,
-        email: email,
-        fullName: fullName,
-        role: role,
-        bio: '',
-        profilePictureUrl: firebaseUser.photoURL ?? '',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-
-      await _userRepository.createUser(newUser);
-      return newUser;
-    } catch (e) {
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(AuthErrorMapper.map(e));
     }
+
+    final firebaseUser = userCredential.user;
+    if (firebaseUser == null) return null;
+
+    final newUser = UserEntity(
+      id: firebaseUser.uid,
+      email: email,
+      fullName: fullName,
+      role: role,
+      bio: '',
+      profilePictureUrl: firebaseUser.photoURL ?? '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    try {
+      await _userRepository.createUser(newUser);
+    } catch (_) {
+      // Don't leave an orphaned Auth account with no profile document —
+      // undo the account creation and surface a clean error instead.
+      await firebaseUser.delete();
+      throw AuthException(
+        'Could not finish setting up your account. Please try again.',
+      );
+    }
+
+    return newUser;
   }
 
   @override
   Future<void> sendPasswordResetEmail(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(AuthErrorMapper.map(e));
+    }
   }
 
   @override

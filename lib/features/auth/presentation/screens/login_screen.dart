@@ -106,12 +106,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                GoogleSignInButton(onPressed: widget.onGoogleSignIn),
+                GoogleSignInButton(
+                  key: const Key('googleSignInButton'),
+                  onPressed: widget.onGoogleSignIn,
+                ),
                 const SizedBox(height: 18),
                 const OrDivider(),
                 const SizedBox(height: 18),
 
                 AuthTextField(
+                  key: const Key('emailField'),
                   label: 'Email Address',
                   controller: _emailController,
                   hintText: 'student@example.com',
@@ -129,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 14),
 
                 AuthTextField(
+                  key: const Key('passwordField'),
                   label: 'Password',
                   controller: _passwordController,
                   hintText: '••••••••',
@@ -157,6 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
+                    key: const Key('forgotPasswordButton'),
                     onPressed: widget.onForgotPassword,
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
@@ -181,6 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 20,
                       height: 20,
                       child: Checkbox(
+                        key: const Key('keepSignedInCheckbox'),
                         value: _keepSignedIn,
                         activeColor: AppColors.primaryBlue,
                         onChanged: (value) {
@@ -208,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
 
                 PrimaryAuthButton(
+                  key: const Key('signInButton'),
                   label: 'Sign In',
                   onPressed: _handleSignIn,
                   isLoading: widget.isLoading,
@@ -223,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 12, color: AppColors.textSecondary),
                     ),
                     GestureDetector(
+                      key: const Key('createAccountLink'),
                       onTap: widget.onCreateAccount,
                       child: const Text(
                         'Create Account',
