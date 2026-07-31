@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "57193630660-tohnoc0pdib16a8o6p6t7kh8kre19thk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.edubridge.edubridge_ai",
+            "certificate_hash": "afc228c713308246534790d70a5d12213f71a88e"
+          }
+        },
+        {
           "client_id": "57193630660-c8d210qp32n8tq41bstmuddgu2poq5et.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "57193630660-c8d210qp32n8tq41bstmuddgu2poq5et.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "57193630660-tjm9mh26hf58ed0lbf1a78rmo42165h5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.edubridge.edubridgeAi"
+              }
             }
           ]
         }
