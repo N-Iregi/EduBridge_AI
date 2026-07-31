@@ -6,18 +6,29 @@ import '../../domain/repositories/user_repository.dart';
 import 'firestore_user_repository.dart';
 
 /// Production Implementation of [AuthRepository] using Firebase Auth & Google Sign-In.
+///
+/// NOTE on google_sign_in ^7.x: `GoogleSignIn` is a singleton
+/// (`GoogleSignIn.instance`) that requires a one-time `initialize()` call,
+/// and it can no longer be constructed independently — see the same note
+/// on [AuthRepository] in data/repositories/auth_repository.dart, which
+/// this class mirrors for its Google sign-in handling.
 class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
   final UserRepository _userRepository;
 
   FirebaseAuthRepository({
     FirebaseAuth? firebaseAuth,
-    GoogleSignIn? googleSignIn,
     UserRepository? userRepository,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn(),
         _userRepository = userRepository ?? FirestoreUserRepository();
+
+  static bool _googleSignInInitialized = false;
+
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (_googleSignInInitialized) return;
+    await GoogleSignIn.instance.initialize();
+    _googleSignInInitialized = true;
+  }
 
   @override
   Stream<UserEntity?> get authStateChanges {
@@ -38,21 +49,22 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<UserEntity?> signInWithGoogle() async {
     try {
-      // 1. Trigger native Google Sign-In interactive picker
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        // Sign in aborted by user
-        return null;
-      }
+      await _ensureGoogleSignInInitialized();
 
-      // 2. Obtain authentication tokens (ID Token & Access Token)
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      // 1. Trigger the native Google account picker. v7's authenticate()
+      // throws a GoogleSignInException with code `canceled` rather than
+      // returning null, which is handled below.
+      final GoogleSignInAccount googleUser =
+          await GoogleSignIn.instance.authenticate();
 
-      // 3. Create Firebase OAuth credential from Google tokens
+      // 2. v7 only hands back an ID token here — access-token/scope
+      // requests are a separate `authorize()` call we don't need, since
+      // Firebase sign-in only requires identity.
+      final idToken = googleUser.authentication.idToken;
+
+      // 3. Create Firebase OAuth credential from the Google ID token.
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        idToken: idToken,
       );
 
       // 4. Authenticate with Firebase using Google Credential
@@ -83,6 +95,9 @@ class FirebaseAuthRepository implements AuthRepository {
       }
 
       return existingUser;
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) return null;
+      rethrow;
     } catch (e) {
       rethrow;
     }
@@ -156,10 +171,12 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {
-    await Future.wait([
-      _firebaseAuth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
+    await _firebaseAuth.signOut();
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (_) {
+      // No-op if there was no active Google session to sign out of.
+    }
   }
 
   /// Helper to convert a basic Firebase User to domain UserEntity if Firestore record is loading
