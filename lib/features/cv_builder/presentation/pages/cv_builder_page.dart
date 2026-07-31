@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/cv_builder_cubit.dart';
 
-enum CvTemplate { classic, modern }
-
-class CvBuilderPage extends StatefulWidget {
+class CvBuilderPage extends StatelessWidget {
   const CvBuilderPage({super.key});
 
   @override
-  State<CvBuilderPage> createState() => _CvBuilderPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CvBuilderCubit(),
+      child: const _CvBuilderView(),
+    );
+  }
 }
 
-class _CvBuilderPageState extends State<CvBuilderPage> {
-  CvTemplate? _selectedTemplate;
-  final _nameController = TextEditingController();
-  final _summaryController = TextEditingController();
-  final _skillsController = TextEditingController();
+class _CvBuilderView extends StatelessWidget {
+  const _CvBuilderView();
 
-  void _export() {
+  void _export(BuildContext context, CvBuilderState state) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('CV Exported'),
         content: SingleChildScrollView(
           child: Text(
-            'Template: ${_selectedTemplate == CvTemplate.classic ? "Classic" : "Modern"}\n\n'
-            'Name: ${_nameController.text}\n\n'
-            'Summary: ${_summaryController.text}\n\n'
-            'Skills: ${_skillsController.text}',
+            'Template: ${state.template == CvTemplate.classic ? "Classic" : "Modern"}\n\n'
+            'Name: ${state.name}\n\n'
+            'Summary: ${state.summary}\n\n'
+            'Skills: ${state.skills}',
           ),
         ),
         actions: [
@@ -40,80 +42,85 @@ class _CvBuilderPageState extends State<CvBuilderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<CvBuilderCubit>().state;
+    final cubit = context.read<CvBuilderCubit>();
+
     return Scaffold(
       appBar: AppBar(title: const Text('CV Builder')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: _selectedTemplate == null
-            ? _buildTemplateSelect()
-            : _buildEditor(),
+        child: state.template == null
+            ? _buildTemplateSelect(cubit)
+            : _buildEditor(context, cubit, state),
       ),
     );
   }
 
-  Widget _buildTemplateSelect() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Choose a template', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => setState(() => _selectedTemplate = CvTemplate.classic),
-                child: const Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Text('Classic'),
+  Widget _buildTemplateSelect(CvBuilderCubit cubit) {
+    return Builder(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Choose a template', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => cubit.selectTemplate(CvTemplate.classic),
+                  child: const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text('Classic'),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => setState(() => _selectedTemplate = CvTemplate.modern),
-                child: const Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Text('Modern'),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => cubit.selectTemplate(CvTemplate.modern),
+                  child: const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text('Modern'),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildEditor() {
+  Widget _buildEditor(BuildContext context, CvBuilderCubit cubit, CvBuilderState state) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextButton.icon(
-            onPressed: () => setState(() => _selectedTemplate = null),
+            onPressed: cubit.clearTemplate,
             icon: const Icon(Icons.arrow_back, size: 18),
             label: const Text('Change template'),
           ),
           TextField(
-            controller: _nameController,
             decoration: const InputDecoration(labelText: 'Full Name'),
+            onChanged: cubit.updateName,
           ),
           const SizedBox(height: 12),
           TextField(
-            controller: _summaryController,
             maxLines: 3,
             decoration: const InputDecoration(labelText: 'Summary'),
+            onChanged: cubit.updateSummary,
           ),
           const SizedBox(height: 12),
           TextField(
-            controller: _skillsController,
             decoration: const InputDecoration(labelText: 'Skills (comma separated)'),
+            onChanged: cubit.updateSkills,
           ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _export,
+              onPressed: () => _export(context, state),
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('Export CV'),
@@ -123,5 +130,5 @@ class _CvBuilderPageState extends State<CvBuilderPage> {
         ],
       ),
     );
-  }
+ }
 }

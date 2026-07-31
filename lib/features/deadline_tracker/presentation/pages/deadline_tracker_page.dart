@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/deadline_cubit.dart';
 
-class Deadline {
-  final String title;
-  final DateTime date;
-  Deadline({required this.title, required this.date});
-}
-
-class DeadlineTrackerPage extends StatefulWidget {
+class DeadlineTrackerPage extends StatelessWidget {
   const DeadlineTrackerPage({super.key});
 
   @override
-  State<DeadlineTrackerPage> createState() => _DeadlineTrackerPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => DeadlineCubit(),
+      child: const _DeadlineTrackerView(),
+    );
+  }
 }
 
-class _DeadlineTrackerPageState extends State<DeadlineTrackerPage> {
-  final List<Deadline> _deadlines = [];
+class _DeadlineTrackerView extends StatelessWidget {
+  const _DeadlineTrackerView();
 
-  Future<void> _addDeadline() async {
+  Future<void> _addDeadline(BuildContext context) async {
     final titleController = TextEditingController();
     DateTime? pickedDate;
+    final cubit = context.read<DeadlineCubit>();
 
     await showDialog(
       context: context,
@@ -65,11 +67,7 @@ class _DeadlineTrackerPageState extends State<DeadlineTrackerPage> {
                 if (titleController.text.trim().isEmpty || pickedDate == null) {
                   return;
                 }
-                setState(() {
-                  _deadlines.add(
-                    Deadline(title: titleController.text.trim(), date: pickedDate!),
-                  );
-                });
+                cubit.addDeadline(titleController.text.trim(), pickedDate!);
                 Navigator.pop(dialogContext);
               },
               child: const Text('Add'),
@@ -82,16 +80,16 @@ class _DeadlineTrackerPageState extends State<DeadlineTrackerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final sorted = [..._deadlines]..sort((a, b) => a.date.compareTo(b.date));
+    final deadlines = context.watch<DeadlineCubit>().state;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Deadline Tracker')),
-      body: sorted.isEmpty
+      body: deadlines.isEmpty
           ? const Center(child: Text('No deadlines yet. Tap + to add one.'))
           : ListView.builder(
-              itemCount: sorted.length,
+              itemCount: deadlines.length,
               itemBuilder: (context, index) {
-                final deadline = sorted[index];
+                final deadline = deadlines[index];
                 final daysLeft = deadline.date.difference(DateTime.now()).inDays;
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -110,7 +108,7 @@ class _DeadlineTrackerPageState extends State<DeadlineTrackerPage> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addDeadline,
+        onPressed: () => _addDeadline(context),
         child: const Icon(Icons.add),
       ),
     );

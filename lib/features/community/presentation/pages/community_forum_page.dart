@@ -1,31 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/firestore_community_repository.dart';
-import '../../domain/entities/community_post_entity.dart';
+import '../cubit/community_cubit.dart';
 import 'community_post_detail_page.dart';
 
-class CommunityForumPage extends StatefulWidget {
+class CommunityForumPage extends StatelessWidget {
   const CommunityForumPage({super.key});
 
   @override
-  State<CommunityForumPage> createState() => _CommunityForumPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CommunityCubit(FirestoreCommunityRepository()),
+      child: const _CommunityForumView(),
+    );
+  }
 }
 
-class _CommunityForumPageState extends State<CommunityForumPage> {
-  final _repository = FirestoreCommunityRepository();
-  late Future<List<CommunityPostEntity>> _future;
+class _CommunityForumView extends StatelessWidget {
+  const _CommunityForumView();
 
-  @override
-  void initState() {
-    super.initState();
-    _future = _repository.getPosts();
-  }
-
-  void _refresh() {
-    setState(() => _future = _repository.getPosts());
-  }
-
-  Future<void> _createPost() async {
+  Future<void> _createPost(BuildContext context, CommunityCubit cubit) async {
     final controller = TextEditingController();
     await showDialog(
       context: context,
@@ -43,24 +37,8 @@ class _CommunityForumPageState extends State<CommunityForumPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final text = controller.text.trim();
-              if (text.isEmpty) return;
-              final now = DateTime.now();
-              // TODO: replace placeholder author with real logged-in user
-              // once auth state access is agreed with the team.
-              await _repository.createPost(CommunityPostEntity(
-                id: const Uuid().v4(),
-                authorId: 'current-user',
-                authorName: 'You',
-                authorProfilePicture: '',
-                content: text,
-                likesCount: 0,
-                commentsCount: 0,
-                createdAt: now,
-                updatedAt: now,
-              ));
+              await cubit.createPost(controller.text);
               if (dialogContext.mounted) Navigator.pop(dialogContext);
-              _refresh();
             },
             child: const Text('Post'),
           ),
@@ -69,42 +47,27 @@ class _CommunityForumPageState extends State<CommunityForumPage> {
     );
   }
 
-  Future<void> _like(CommunityPostEntity post) async {
-    await _repository.updatePost(
-      CommunityPostEntity(
-        id: post.id,
-        authorId: post.authorId,
-        authorName: post.authorName,
-        authorProfilePicture: post.authorProfilePicture,
-        content: post.content,
-        likesCount: post.likesCount + 1,
-        commentsCount: post.commentsCount,
-        createdAt: post.createdAt,
-        updatedAt: DateTime.now(),
-      ),
-    );
-    _refresh();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<CommunityCubit>().state;
+    final cubit = context.read<CommunityCubit>();
+
     return Scaffold(
       appBar: AppBar(title: const Text('Community Forum')),
-      body: FutureBuilder<List<CommunityPostEntity>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Builder(
+        builder: (context) {
+          if (state is CommunityLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+          if (state is CommunityError) {
+            return Center(child: Text(state.message));
           }
-          final posts = snapshot.data ?? [];
+          final posts = (state as CommunityLoaded).posts;
           if (posts.isEmpty) {
             return const Center(child: Text('No posts yet. Be the first!'));
           }
           return RefreshIndicator(
-            onRefresh: () async => _refresh(),
+            onRefresh: cubit.loadPosts,
             child: ListView.builder(
               itemCount: posts.length,
               itemBuilder: (context, index) {
@@ -125,7 +88,7 @@ class _CommunityForumPageState extends State<CommunityForumPage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.favorite_border),
-                          onPressed: () => _like(post),
+                          onPressed: () => cubit.likePost(post),
                         ),
                         Text('${post.likesCount}'),
                       ],
@@ -137,9 +100,11 @@ class _CommunityForumPageState extends State<CommunityForumPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _createPost,
-        child: const Icon(Icons.add),
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton(
+          onPressed: () => _createPost(context, cubit),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

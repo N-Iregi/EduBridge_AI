@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../auth/presentation/pages/auth_flow_page.dart';
 import '../../../scholarship/presentation/pages/scholarship_browse_page.dart';
 import '../../../mentorship/presentation/pages/ai_mentor_chat_page.dart';
 import '../../../career/presentation/pages/career_pathways_page.dart';
@@ -15,6 +16,7 @@ class DevMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <(String, WidgetBuilder)>[
+      ('Auth (Login / Sign Up / Reset)', (_) => const AuthFlowPage()),
       ('Scholarships', (_) => const ScholarshipBrowsePage()),
       ('AI Mentor', (_) => const AiMentorChatPage()),
       ('Career Pathways', (_) => const CareerPathwaysPage()),
