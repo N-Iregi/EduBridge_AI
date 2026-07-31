@@ -1,58 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/essay_cubit.dart';
 
-class EssayAssistantPage extends StatefulWidget {
+class EssayAssistantPage extends StatelessWidget {
   const EssayAssistantPage({super.key});
 
   @override
-  State<EssayAssistantPage> createState() => _EssayAssistantPageState();
-}
-
-class _EssayAssistantPageState extends State<EssayAssistantPage> {
-  final _draftController = TextEditingController();
-  String? _feedback;
-  final List<String> _savedDrafts = [];
-
-  void _reviewDraft() {
-    final text = _draftController.text.trim();
-    if (text.isEmpty) return;
-    setState(() {
-      // Placeholder feedback until a real AI review backend is wired in.
-      _feedback =
-          'Good start! Consider adding a specific example to strengthen '
-          'your main point, and make sure your conclusion ties back to '
-          'why you are a strong fit for this opportunity.';
-    });
-  }
-
-  void _saveDraft() {
-    final text = _draftController.text.trim();
-    if (text.isEmpty) return;
-    setState(() {
-      _savedDrafts.add(text);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Draft saved.')),
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => EssayCubit(),
+      child: const _EssayAssistantView(),
     );
   }
+}
 
-  void _showSavedDrafts() {
+class _EssayAssistantView extends StatelessWidget {
+  const _EssayAssistantView();
+
+  void _showSavedDrafts(BuildContext context, List<String> drafts) {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
-        child: _savedDrafts.isEmpty
+        child: drafts.isEmpty
             ? const Padding(
                 padding: EdgeInsets.all(24),
                 child: Text('No saved drafts yet.'),
               )
             : ListView(
                 shrinkWrap: true,
-                children: _savedDrafts
+                children: drafts
                     .map((d) => ListTile(
-                          title: Text(
-                            d,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          title: Text(d, maxLines: 2, overflow: TextOverflow.ellipsis),
                         ))
                     .toList(),
               ),
@@ -62,13 +40,16 @@ class _EssayAssistantPageState extends State<EssayAssistantPage> {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<EssayCubit>().state;
+    final cubit = context.read<EssayCubit>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Essay Assistant'),
         actions: [
           IconButton(
             icon: const Icon(Icons.folder_open),
-            onPressed: _showSavedDrafts,
+            onPressed: () => _showSavedDrafts(context, state.savedDrafts),
           ),
         ],
       ),
@@ -80,8 +61,8 @@ class _EssayAssistantPageState extends State<EssayAssistantPage> {
             Text('Your Draft', style: Theme.of(context).textTheme.labelLarge),
             const SizedBox(height: 8),
             TextField(
-              controller: _draftController,
               maxLines: 8,
+              onChanged: cubit.updateDraft,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Write your essay draft here...',
@@ -92,20 +73,20 @@ class _EssayAssistantPageState extends State<EssayAssistantPage> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _reviewDraft,
+                    onPressed: cubit.requestReview,
                     child: const Text('AI Review'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _saveDraft,
+                    onPressed: cubit.saveDraft,
                     child: const Text('Save'),
                   ),
                 ),
               ],
             ),
-            if (_feedback != null) ...[
+            if (state.feedback != null) ...[
               const SizedBox(height: 16),
               Text('Feedback', style: Theme.of(context).textTheme.labelLarge),
               const SizedBox(height: 8),
@@ -115,7 +96,7 @@ class _EssayAssistantPageState extends State<EssayAssistantPage> {
                   color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(_feedback!),
+                child: Text(state.feedback!),
               ),
             ],
           ],

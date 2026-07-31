@@ -1,47 +1,31 @@
 import 'package:flutter/material.dart';
-
-class CareerPath {
-  final String title;
-  final String description;
-  final List<String> skills;
-  const CareerPath({
-    required this.title,
-    required this.description,
-    required this.skills,
-  });
-}
-
-const _careerPaths = [
-  CareerPath(
-    title: 'Software Engineering',
-    description:
-        'Design, build, and maintain software systems and applications.',
-    skills: ['Programming', 'Problem Solving', 'Version Control'],
-  ),
-  CareerPath(
-    title: 'Data Science',
-    description:
-        'Analyze data to uncover insights and support decision-making.',
-    skills: ['Statistics', 'Python', 'Machine Learning'],
-  ),
-  CareerPath(
-    title: 'UX/UI Design',
-    description: 'Design intuitive and accessible user experiences.',
-    skills: ['Figma', 'User Research', 'Prototyping'],
-  ),
-];
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/career_cubit.dart';
 
 class CareerPathwaysPage extends StatelessWidget {
   const CareerPathwaysPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CareerCubit(),
+      child: const _CareerPathwaysView(),
+    );
+  }
+}
+
+class _CareerPathwaysView extends StatelessWidget {
+  const _CareerPathwaysView();
+
+  @override
+  Widget build(BuildContext context) {
+    final paths = context.watch<CareerCubit>().state;
     return Scaffold(
       appBar: AppBar(title: const Text('Career Pathways')),
       body: ListView.builder(
-        itemCount: _careerPaths.length,
+        itemCount: paths.length,
         itemBuilder: (context, index) {
-          final path = _careerPaths[index];
+          final path = paths[index];
           return Card(
             margin: const EdgeInsets.all(12),
             child: ListTile(
