@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 
 // Profile & Settings screen — matches the Figma frame with
 // Notifications / Security / Language / Support rows and logout.
+//
+// Colors come from Theme.of(context).colorScheme rather than the fixed
+// AppColors palette, so this screen actually follows the app's light/dark
+// theme instead of staying pinned to the Figma light-mode colors.
 //
 // userProgram/userLocation from the original Figma frame were dropped:
 // UserEntity has no program or location field, so there was nothing real
@@ -32,17 +35,19 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: scheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: scheme.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'EduBridge',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: AppColors.darkBlue,
+            color: scheme.onSurface,
           ),
         ),
         centerTitle: false,
@@ -67,10 +72,10 @@ class ProfileScreen extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: onLogout,
-                child: const Text(
+                child: Text(
                   'Logout Account',
                   style: TextStyle(
-                    color: AppColors.danger,
+                    color: scheme.error,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -98,31 +103,33 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         children: [
           CircleAvatar(
             radius: 32,
-            backgroundColor: AppColors.infoBg,
+            backgroundColor: scheme.primaryContainer,
             backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
             child: imageUrl == null
-                ? const Icon(Icons.person, color: AppColors.primaryBlue, size: 32)
+                ? Icon(Icons.person, color: scheme.onPrimaryContainer, size: 32)
                 : null,
           ),
           const SizedBox(height: 12),
           Text(
             name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppColors.deepNavy,
+              color: scheme.onSurface,
             ),
           ),
           if (bio != null && bio!.isNotEmpty) ...[
@@ -130,7 +137,7 @@ class _ProfileHeader extends StatelessWidget {
             Text(
               bio!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),
           ],
         ],
@@ -154,11 +161,13 @@ class _SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: scheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -171,7 +180,7 @@ class _SettingsCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textMuted,
+                  color: scheme.onSurfaceVariant,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -183,21 +192,21 @@ class _SettingsCard extends StatelessWidget {
             subtitle: 'Alerts, Email, Application Updates',
             onTap: onNotificationsTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: scheme.outlineVariant),
           _SettingsRow(
             icon: Icons.shield_outlined,
             title: 'Security',
             subtitle: 'Password, Two-factor Auth, Biometrics',
             onTap: onSecurityTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: scheme.outlineVariant),
           _SettingsRow(
             icon: Icons.language_outlined,
             title: 'Language',
             subtitle: 'English (US)',
             onTap: onLanguageTap,
           ),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: scheme.outlineVariant),
           _SettingsRow(
             icon: Icons.help_outline,
             title: 'Support',
@@ -225,30 +234,32 @@ class _SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return ListTile(
       onTap: onTap,
       leading: Container(
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: AppColors.infoBg,
+          color: scheme.primaryContainer,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: AppColors.primaryBlue, size: 18),
+        child: Icon(icon, color: scheme.onPrimaryContainer, size: 18),
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: scheme.onSurface,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+        style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
       ),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
+      trailing: Icon(Icons.chevron_right, color: scheme.onSurfaceVariant, size: 20),
     );
   }
 }

@@ -5,6 +5,9 @@ abstract class UserRepository {
   /// Fetches a user's details by their database UID.
   Future<UserEntity?> getUserById(String uid);
 
+  /// Fetches all users with the given [role] (e.g. 'mentor').
+  Future<List<UserEntity>> getUsersByRole(String role);
+
   /// Saves a newly registered user's profile information to Firestore.
   Future<void> createUser(UserEntity user);
 

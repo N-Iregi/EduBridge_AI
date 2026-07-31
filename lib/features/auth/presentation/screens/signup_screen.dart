@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_buttons.dart';
 
@@ -62,8 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: scheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -78,38 +79,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryBlue,
+                        color: scheme.primary,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(Icons.school,
-                          color: AppColors.infoBg, size: 28),
+                      child: Icon(Icons.school, color: scheme.onPrimary, size: 28),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'EduBridge',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.darkBlue,
+                        color: scheme.onSurface,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Create your account',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.deepNavy,
+                    color: scheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Start your journey to global opportunities',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 22),
 
@@ -156,7 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _obscurePassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: AppColors.textMuted,
+                      color: scheme.onSurfaceVariant,
                       size: 20,
                     ),
                     onPressed: () {
@@ -186,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       _obscureConfirmPassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: AppColors.textMuted,
+                      color: scheme.onSurfaceVariant,
                       size: 20,
                     ),
                     onPressed: () {
@@ -207,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Text(
                     widget.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, color: AppColors.danger),
+                    style: TextStyle(fontSize: 12, color: scheme.error),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -231,19 +231,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Already have an account? ',
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
                     ),
                     GestureDetector(
                       key: const Key('signInLink'),
                       onTap: widget.onSignIn,
-                      child: const Text(
+                      child: Text(
                         'Sign in',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.primaryBlue,
+                          color: scheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

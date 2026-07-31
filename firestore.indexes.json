@@ -41,6 +41,14 @@
       ]
     },
     {
+      "collectionGroup": "deadlines",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "dueDate", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "scholarships",
       "queryScope": "COLLECTION",
       "fields": [

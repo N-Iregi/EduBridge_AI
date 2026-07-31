@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 
-// Solid blue button used across auth screens.
+// Solid button used across auth screens. Colors come from
+// Theme.of(context).colorScheme so this follows the app's light/dark theme.
 class PrimaryAuthButton extends StatelessWidget {
   const PrimaryAuthButton({
     super.key,
@@ -16,25 +16,27 @@ class PrimaryAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return SizedBox(
       width: double.infinity,
       height: 48,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: scheme.onPrimary,
                   strokeWidth: 2,
                 ),
               )
@@ -58,21 +60,23 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return SizedBox(
       width: double.infinity,
       height: 46,
       child: OutlinedButton.icon(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: scheme.outlineVariant),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        icon: const Icon(Icons.g_mobiledata, size: 22, color: AppColors.textPrimary),
-        label: const Text(
+        icon: Icon(Icons.g_mobiledata, size: 22, color: scheme.onSurface),
+        label: Text(
           'Continue with Google',
-          style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 14, color: scheme.onSurface),
         ),
       ),
     );
@@ -85,17 +89,19 @@ class OrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Row(
-      children: const [
-        Expanded(child: Divider(color: AppColors.border)),
+      children: [
+        Expanded(child: Divider(color: scheme.outlineVariant)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             'OR',
-            style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+            style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
           ),
         ),
-        Expanded(child: Divider(color: AppColors.border)),
+        Expanded(child: Divider(color: scheme.outlineVariant)),
       ],
     );
   }

@@ -27,6 +27,18 @@ class FirestoreUserRepository implements UserRepository {
     }
   }
 
+  /// All users registered with the given [role], e.g. every mentor a
+  /// student can request a session with.
+  @override
+  Future<List<UserEntity>> getUsersByRole(String role) async {
+    try {
+      final snapshot = await _usersCollection.where('role', isEqualTo: role).get();
+      return snapshot.docs.map((doc) => UserModel.fromSnapshot(doc)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Writes the profile document at `users/{user.id}`. In practice this is
   /// called from [AuthRepository] right after the Firebase Auth account is
   /// created, not used standalone.

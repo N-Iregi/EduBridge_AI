@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_buttons.dart';
 
@@ -42,8 +41,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final successColor = scheme.brightness == Brightness.dark
+        ? Colors.greenAccent.shade200
+        : Colors.green.shade700;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: scheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -59,10 +63,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     padding: EdgeInsets.zero,
                     alignment: Alignment.centerLeft,
                   ),
-                  icon: const Icon(Icons.arrow_back, size: 16, color: AppColors.primaryBlue),
-                  label: const Text(
+                  icon: Icon(Icons.arrow_back, size: 16, color: scheme.primary),
+                  label: Text(
                     'Back to sign in',
-                    style: TextStyle(fontSize: 13, color: AppColors.primaryBlue),
+                    style: TextStyle(fontSize: 13, color: scheme.primary),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -72,29 +76,29 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: AppColors.infoBg,
+                      color: scheme.primaryContainer,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(Icons.lock_outline,
-                        color: AppColors.primaryBlue, size: 26),
+                    child: Icon(Icons.lock_outline,
+                        color: scheme.onPrimaryContainer, size: 26),
                   ),
                 ),
                 const SizedBox(height: 18),
 
-                const Text(
+                Text(
                   'Reset your password',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.deepNavy,
+                    color: scheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   "Enter the email linked to your account and we'll send you a reset link.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
+                  style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant, height: 1.4),
                 ),
                 const SizedBox(height: 24),
 
@@ -120,7 +124,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   Text(
                     widget.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, color: AppColors.danger),
+                    style: TextStyle(fontSize: 12, color: scheme.error),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -128,7 +132,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   Text(
                     widget.successMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, color: AppColors.success),
+                    style: TextStyle(fontSize: 12, color: successColor),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -144,18 +148,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Didn't get the email? ",
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
                     ),
                     GestureDetector(
                       key: const Key('resendLink'),
                       onTap: _handleSendLink,
-                      child: const Text(
+                      child: Text(
                         'Resend',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.primaryBlue,
+                          color: scheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

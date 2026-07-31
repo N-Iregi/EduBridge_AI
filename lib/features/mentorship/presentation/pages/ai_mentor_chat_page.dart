@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 import '../cubit/mentor_chat_cubit.dart';
+import 'my_mentor_sessions_page.dart';
 
 class AiMentorChatPage extends StatelessWidget {
   const AiMentorChatPage({super.key});
@@ -56,6 +59,20 @@ class _AiMentorChatViewState extends State<_AiMentorChatView> {
       appBar: AppBar(
         title: const Text('AI Mentor'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.event_available),
+            tooltip: 'Book a Mentor Session',
+            onPressed: () {
+              final authState = context.read<AuthBloc>().state;
+              if (authState is! AuthAuthenticated) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MyMentorSessionsPage(studentId: authState.user.id),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.bookmark),
             onPressed: () => _showSavedAdvice(context, messages),

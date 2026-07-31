@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../application/presentation/pages/my_applications_page.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 import '../../data/repositories/firestore_scholarship_repository.dart';
 import '../../domain/entities/scholarship_entity.dart';
+import 'saved_scholarships_page.dart';
 import 'scholarship_detail_page.dart';
 
 const _categories = ['undergraduate', 'postgraduate', 'STEM', 'arts', 'business'];
@@ -75,10 +80,29 @@ class _ScholarshipBrowsePageState extends State<ScholarshipBrowsePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState is AuthAuthenticated ? authState.user.id : '';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scholarships'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.assignment_outlined),
+            tooltip: 'My Applications',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => MyApplicationsPage(userId: userId)),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.bookmark_outline),
+            tooltip: 'Saved Scholarships',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => SavedScholarshipsPage(userId: userId)),
+            ),
+          ),
           IconButton(icon: const Icon(Icons.filter_list), onPressed: _openFilters),
         ],
       ),

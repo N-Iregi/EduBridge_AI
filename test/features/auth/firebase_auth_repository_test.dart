@@ -11,6 +11,11 @@ class MockUserRepository implements UserRepository {
   }
 
   @override
+  Future<List<UserEntity>> getUsersByRole(String role) async {
+    return _storage.values.where((u) => u.role == role).toList();
+  }
+
+  @override
   Future<void> createUser(UserEntity user) async {
     _storage[user.id] = user;
   }

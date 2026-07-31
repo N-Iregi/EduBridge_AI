@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/auth_buttons.dart';
 
@@ -55,8 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: scheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -71,38 +72,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryBlue,
+                        color: scheme.primary,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(Icons.school,
-                          color: AppColors.infoBg, size: 28),
+                      child: Icon(Icons.school, color: scheme.onPrimary, size: 28),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'EduBridge',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.darkBlue,
+                        color: scheme.onSurface,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Welcome back',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.deepNavy,
+                    color: scheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Please enter your details to sign in',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 24),
 
@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       _obscurePassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: AppColors.textMuted,
+                      color: scheme.onSurfaceVariant,
                       size: 20,
                     ),
                     onPressed: () {
@@ -169,11 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Forgot password?',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.primaryBlue,
+                        color: scheme.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -189,17 +189,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Checkbox(
                         key: const Key('keepSignedInCheckbox'),
                         value: _keepSignedIn,
-                        activeColor: AppColors.primaryBlue,
+                        activeColor: scheme.primary,
                         onChanged: (value) {
                           setState(() => _keepSignedIn = value ?? false);
                         },
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       'Keep me signed in for 30 days',
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -209,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     widget.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, color: AppColors.danger),
+                    style: TextStyle(fontSize: 12, color: scheme.error),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -225,19 +224,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Don't have an account? ",
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
                     ),
                     GestureDetector(
                       key: const Key('createAccountLink'),
                       onTap: widget.onCreateAccount,
-                      child: const Text(
+                      child: Text(
                         'Create Account',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.primaryBlue,
+                          color: scheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

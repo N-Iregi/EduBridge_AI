@@ -5,8 +5,8 @@ A mobile application built with Flutter and Firebase, connecting underserved Afr
 ## Features
 
 - **Authentication** — Email/password and Google Sign-In, with email verification and password reset
-- **Scholarship Discovery** — Browse, filter by category, view details, and apply to scholarships
-- **AI Mentor Chat** — Conversational guidance with the ability to save useful advice
+- **Scholarship Discovery** — Browse, filter by category, view details, apply, bookmark for later, and track application status/notes
+- **AI Mentor Chat** — Conversational guidance with the ability to save useful advice, plus booking real sessions with registered mentors
 - **Career Pathways** — Explore career paths and related skills
 - **CV Builder** — Select a template, edit your details, and export
 - **Essay Assistant** — Draft essays, get AI review feedback, and save drafts
@@ -105,9 +105,11 @@ Each feature follows a `presentation / domain / data` layered structure, keeping
 
 ## Known Limitations
 
-- AI Mentor Chat and Essay Assistant return placeholder responses rather than real AI-generated content; a live AI backend integration is planned.
-- Career Pathways, CV Builder, and Deadline Tracker use in-app state rather than Firestore, pending dedicated backend models.
-- Deadline Tracker does not yet trigger real push or local notifications.
+- AI Mentor Chat and Essay Assistant return placeholder responses rather than real AI-generated content; a live AI backend integration is planned. Booking an actual mentor (separate from the placeholder chat) is real — see "My Mentor Sessions" below.
+- Career Pathways and CV Builder use in-app state rather than Firestore, pending dedicated backend models.
+- Deadline Tracker, scholarship bookmarks, scholarship applications, and mentorship session bookings are all backed by Firestore with full create/read/update/delete, but none yet trigger real push or local notifications.
+- Mentor session booking requires at least one user with `role == 'mentor'` to exist in Firestore — there's no mentor sign-up flow or admin console yet, so the mentor list is empty until one is added manually.
+- Profile screen displays the signed-in user's details but has no edit/save flow yet.
 - Community Forum's like feature does not track per-user likes, so a post could currently be liked more than once by the same user.
 - Only email verification is implemented as an additional auth safeguard; OTP was not implemented.
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 
-// Labeled text input used across the auth screens.
+// Labeled text input used across the auth screens. Colors come from
+// Theme.of(context).colorScheme so this follows the app's light/dark theme.
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
     super.key,
@@ -24,14 +24,16 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: AppColors.textPrimary,
+            color: scheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -41,30 +43,30 @@ class AuthTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 14, color: scheme.onSurface),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
+            hintStyle: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: AppColors.surface,
+            fillColor: scheme.surfaceContainerHigh,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide: BorderSide(color: scheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide: BorderSide(color: scheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1.4),
+              borderSide: BorderSide(color: scheme.primary, width: 1.4),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.danger),
+              borderSide: BorderSide(color: scheme.error),
             ),
           ),
         ),
